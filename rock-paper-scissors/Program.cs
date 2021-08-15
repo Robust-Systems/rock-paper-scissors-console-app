@@ -12,6 +12,8 @@ namespace rock_paper_scissors
     {
       GameController gameController = new GameController();
 
+      gameController.PlayGames();
+
       Console.WriteLine("The end");
     }
   }

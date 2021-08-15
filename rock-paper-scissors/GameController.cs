@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace rock_paper_scissors
 {
-  class GameController
+  public class GameController : IGameController
   {
     private Player HumanPlayer;
 
@@ -13,35 +13,92 @@ namespace rock_paper_scissors
 
     private int CurrentGameNumber;
 
-    private Random rnd = new Random();
+    private readonly Random rnd = new Random();
 
     public GameController()
     {
-      Initialise();
 
-      PlayGames();
     }
 
-    private void PlayGames()
+    public void PlayGames()
     {
+      Initialise();
+
       while (CurrentGameNumber < NumberOfGamestoPlay)
       {
         PlayGame();
+
         CurrentGameNumber++;
       }
+
+      DisplayScore();
+    }
+
+    private void DisplayScore()
+    {
+      Console.WriteLine($"{HumanPlayer.Name} won: {HumanPlayer.GamesWon} games.");
+      Console.WriteLine($"{RandomComputerPlayer.Name} won: {RandomComputerPlayer.GamesWon} games.");
     }
 
     private void PlayGame()
     {
       SetGameOption(HumanPlayer);
+
       SetGameOption(RandomComputerPlayer);
+
+      CalculateScore(HumanPlayer, RandomComputerPlayer, out Player winner);
+
+      if (winner is null)
+      {
+        Console.WriteLine($"The game was a draw.{Environment.NewLine}");
+      }
+      else
+      {
+        Console.WriteLine($"{winner.Name} won the game.{Environment.NewLine}");
+      }
     }
 
-    private void SetGameOption(Player player)
+    public void CalculateScore(Player player1, Player player2, out Player winner)
+    {
+      winner = null;
+
+      if (WonTheGame(player1.ChoiceSelected, player2.ChoiceSelected))
+      {
+        player1.GamesWon++;
+        winner = player1;
+      }
+
+      if (WonTheGame(player2.ChoiceSelected, player1.ChoiceSelected))
+      {
+        player2.GamesWon++;
+        winner = player2;
+      }
+    }
+
+    public bool WonTheGame(GameOption choiceSelected1, GameOption choiceSelected2)
+    {
+      if (choiceSelected1 == GameOption.Rock && choiceSelected2 == GameOption.Scissors)
+      {
+        return true;
+      }
+      else if (choiceSelected1 == GameOption.Scissors && choiceSelected2 == GameOption.Paper)
+      {
+        return true;
+      }
+      else if (choiceSelected1 == GameOption.Paper && choiceSelected2 == GameOption.Rock)
+      {
+        return true;
+      }
+
+      return false;
+    }
+
+    public void SetGameOption(Player player)
     {
       if (player.AutoSelectGameOption)
       {
         player.ChoiceSelected = (GameOption)rnd.Next(1, 3);
+        Console.WriteLine($"{Environment.NewLine}{player.Name} selected option: {player.ChoiceSelected}{Environment.NewLine}");
         return;
       }
 
@@ -60,10 +117,10 @@ namespace rock_paper_scissors
 
       player.ChoiceSelected = optionSelected;
 
-      Console.WriteLine($"{Environment.NewLine}Option selected: {optionSelected}{Environment.NewLine}");
+      Console.WriteLine($"{player.Name} selected option: {player.ChoiceSelected}");
     }
 
-    private bool ValidateKeyPressed(ConsoleKeyInfo keyPressed, out GameOption gameOption)
+    public bool ValidateKeyPressed(ConsoleKeyInfo keyPressed, out GameOption gameOption)
     {
       char[] validValues = new char[] { 'R', 'r', 'P', 'p', 'S', 's' };
 
@@ -78,7 +135,7 @@ namespace rock_paper_scissors
       return true;
     }
 
-    private GameOption ConvertKeyToGameOption(char key)
+    public GameOption ConvertKeyToGameOption(char key)
     {
       switch (key)
       {
