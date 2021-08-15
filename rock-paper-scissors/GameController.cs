@@ -49,16 +49,18 @@ namespace rock_paper_scissors
       Console.WriteLine("[R]ock");
       Console.WriteLine("[P]aper");
       Console.WriteLine("[S]cissors");
-      Console.WriteLine();
-      var keyPressed = Console.ReadKey();
-      Console.WriteLine();
-      Console.WriteLine();
+      ConsoleKeyInfo keyPressed;
 
-      bool isValid = ValidateKeyPressed(keyPressed, out GameOption optionSelected);
+      GameOption optionSelected;
+      do
+      {
+        keyPressed = Console.ReadKey();
+        Console.WriteLine();
+      } while (!ValidateKeyPressed(keyPressed, out optionSelected));
 
       player.ChoiceSelected = optionSelected;
 
-      Console.WriteLine($"Option selected: {optionSelected}{Environment.NewLine}");
+      Console.WriteLine($"{Environment.NewLine}Option selected: {optionSelected}{Environment.NewLine}");
     }
 
     private bool ValidateKeyPressed(ConsoleKeyInfo keyPressed, out GameOption gameOption)
