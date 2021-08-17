@@ -10,7 +10,8 @@ namespace rock_paper_scissors
 
       gameController.PlayGames();
 
-      Console.WriteLine("The end");
+      Console.WriteLine($"{Environment.NewLine}The end. Press any key to exit. . .");
+      Console.ReadKey();
     }
   }
 }
